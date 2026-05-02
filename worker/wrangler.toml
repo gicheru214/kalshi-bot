@@ -1,0 +1,13 @@
+name = "kalshi-bot-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+# Deploy with:
+#   cd worker && npx wrangler deploy
+#
+# Then set WORKER_URL in your frontend env:
+#   VITE_WORKER_URL=https://kalshi-bot-api.<your-subdomain>.workers.dev

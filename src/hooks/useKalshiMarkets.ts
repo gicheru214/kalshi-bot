@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import type { Market, Category } from '../types'
 import { MARKETS } from '../data/markets'
 
+const WORKER_URL = import.meta.env.VITE_WORKER_URL ?? ''
 const KALSHI_API = 'https://api.elections.kalshi.com/trade-api/v2/markets?status=open&limit=1000'
+const PROXY_API = WORKER_URL ? `${WORKER_URL}/api/markets` : KALSHI_API
 const POLL_INTERVAL = 60_000 // 1 minute
 const CACHE_KEY = 'kalshi_live_markets'
 const CACHE_TTL = 55_000
@@ -80,7 +82,7 @@ function writeCache(markets: Market[]) {
 
 // ── Fetch + sort ─────────────────────────────────────────────────────────────
 async function fetchTop30(): Promise<Market[]> {
-  const res = await fetch(KALSHI_API, { headers: { Accept: 'application/json' } })
+  const res = await fetch(PROXY_API, { headers: { Accept: 'application/json' } })
   if (!res.ok) throw new Error(`Kalshi API ${res.status}`)
   const json = await res.json()
   const raw: Record<string, unknown>[] = Array.isArray(json.markets) ? json.markets : []
