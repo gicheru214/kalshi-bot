@@ -182,7 +182,7 @@ export default function KalshiConnectModal({ onConnect, onSkip }: Props) {
         )}
 
         <button style={s.shameBtn} onClick={onSkip}>
-          No thanks, I'll keep losing trades manually
+          No thanks, I'll keep losing trades to AI annually 📉
         </button>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
