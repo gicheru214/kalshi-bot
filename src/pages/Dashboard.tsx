@@ -20,11 +20,30 @@ const SORT_OPTIONS: { key: SortKey; label: string; icon: React.FC<{ size: number
   { key: 'endDate',  label: 'Ending Soon',  icon: Clock },
 ]
 
-function trackSelection(userId: string, email: string, vertical: string, marketsViewed: string[], kalshiConnected: boolean, depositAmount: number | null) {
+function trackSelection(
+  userId: string, email: string, name: string, vertical: string,
+  marketsViewed: string[], kalshiConnected: boolean, depositAmount: number | null,
+  funnelStep: string
+) {
   try {
     const existing = JSON.parse(localStorage.getItem('admin_selections') || '[]')
     const idx = existing.findIndex((r: { userId: string }) => r.userId === userId)
-    const record = { userId, email, vertical, marketsViewed, kalshiConnected, depositAmount, timestamp: Date.now() }
+    const isMobile = window.innerWidth < 768
+    const prev = idx >= 0 ? existing[idx] : null
+    const record = {
+      userId, email, name, vertical, marketsViewed,
+      kalshiConnected, depositAmount,
+      funnelStep,
+      device: isMobile ? 'mobile' : 'desktop',
+      sessions: (prev?.sessions ?? 0) + (prev ? 0 : 1),
+      firstSeen: prev?.firstSeen ?? Date.now(),
+      lastSeen: Date.now(),
+      // activity log — append new events
+      activity: [
+        ...(prev?.activity ?? []),
+        { step: funnelStep, ts: Date.now() },
+      ].slice(-20), // keep last 20 events
+    }
     if (idx >= 0) existing[idx] = record
     else existing.push(record)
     localStorage.setItem('admin_selections', JSON.stringify(existing))
@@ -50,9 +69,9 @@ export default function Dashboard() {
   // Track as user progresses
   useEffect(() => {
     if (selectedVertical && user) {
-      trackSelection(user.id, user.email, selectedVertical, marketsViewed, !!kalshiEmail, null)
+      trackSelection(user.id, user.email, user.name, selectedVertical, marketsViewed, !!kalshiEmail, null, step)
     }
-  }, [selectedVertical, marketsViewed, kalshiEmail])
+  }, [selectedVertical, marketsViewed, kalshiEmail, step])
 
   const handleVerticalSelect = (v: string) => {
     setSelectedVertical(v)
@@ -72,7 +91,7 @@ export default function Dashboard() {
   }
 
   const handleDeposit = (amount: number) => {
-    if (user) trackSelection(user.id, user.email, selectedVertical, marketsViewed, !!kalshiEmail, amount)
+    if (user) trackSelection(user.id, user.email, user.name, selectedVertical, marketsViewed, !!kalshiEmail, amount, 'done')
     localStorage.setItem(`onboard_done_${user?.id}`, '1')
     setStep('done')
   }
