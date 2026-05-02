@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, Search, ChevronDown, LogOut, User, Wallet } from 'lucide-react'
+import { Bell, Search, ChevronDown, LogOut, User, Wallet, Sun, Moon } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Header() {
   const { user, signOut } = useAuth()
+  const { theme, toggle } = useTheme()
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -18,8 +20,7 @@ export default function Header() {
     <header style={s.header}>
       <div style={s.inner}>
         <Link to="/app" style={s.logo}>
-          <div style={s.logoMark}>K</div>
-          <span style={s.logoText}>Kalshi Bot</span>
+          <img src="/logo.png" alt="Kalshibot" style={s.logoImg} />
         </Link>
 
         <nav className="header-nav" style={s.nav}>
@@ -43,6 +44,9 @@ export default function Header() {
         <div style={s.right}>
           <button style={s.iconBtn}><Search size={17} /></button>
           <button style={s.iconBtn}><Bell size={17} /></button>
+          <button style={s.iconBtn} onClick={toggle} title="Toggle theme">
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
 
           <div style={s.balanceChip}>
             <Wallet size={12} style={{ color: 'var(--green)' }} />
@@ -84,14 +88,11 @@ const s: Record<string, React.CSSProperties> = {
     maxWidth: 1280, margin: '0 auto', padding: '0 20px',
     height: 58, display: 'flex', alignItems: 'center', gap: 20,
   },
-  logo: { display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 },
-  logoMark: {
-    width: 28, height: 28, borderRadius: 7,
-    background: 'linear-gradient(135deg, #00c896, #00a8ff)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: 13, fontWeight: 900, color: '#04080f',
+  logo: {
+    display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0,
+    background: 'white', borderRadius: 8, padding: '2px 8px',
   },
-  logoText: { fontSize: 15, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.3px' },
+  logoImg: { height: 30, width: 'auto' },
   nav: { display: 'flex', gap: 2, flex: 1 },
   navLink: {
     padding: '5px 12px', borderRadius: 7, fontSize: 13, fontWeight: 600,

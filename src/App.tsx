@@ -9,6 +9,7 @@ import Market from './pages/Market'
 import Admin from './pages/Admin'
 import Header from './components/Header'
 import BottomNav from './components/BottomNav'
+import { ThemeProvider } from './context/ThemeContext'
 
 // Layout wrapper for authenticated app pages
 function AppLayout() {
@@ -142,9 +143,11 @@ function PlaceholderPage({ title, icon }: { title: string; icon: string }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

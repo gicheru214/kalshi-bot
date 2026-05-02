@@ -5,15 +5,18 @@
 }
 
 :root {
-  /* Kalshi palette */
+  /* Dark theme (default) */
   --bg:            #04080f;
   --bg-card:       #0b1220;
   --bg-card-hover: #101b2e;
   --bg-elevated:   #0f1929;
   --border:        #162035;
   --border-bright: #1e2e48;
+  --text:          #f0f4ff;
+  --text-secondary:#8fa3bf;
+  --text-muted:    #4a6080;
 
-  /* Kalshi green */
+  /* Green — same in both modes */
   --green:         #00c896;
   --green-bright:  #00e5ab;
   --green-dim:     rgba(0, 200, 150, 0.12);
@@ -26,12 +29,24 @@
   --red-dim:       rgba(244, 63, 94, 0.12);
   --yellow:        #f59e0b;
 
-  /* Text */
-  --text:          #f0f4ff;
-  --text-secondary:#8fa3bf;
-  --text-muted:    #4a6080;
-
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg:            #f5f7fa;
+  --bg-card:       #ffffff;
+  --bg-card-hover: #f0f4f8;
+  --bg-elevated:   #edf2f7;
+  --border:        #e2e8f0;
+  --border-bright: #cbd5e0;
+  --text:          #0d1117;
+  --text-secondary:#4a5568;
+  --text-muted:    #a0aec0;
+  --green-dim:     rgba(0, 200, 150, 0.1);
+  --green-dim2:    rgba(0, 200, 150, 0.06);
+  --red-dim:       rgba(244, 63, 94, 0.08);
+  --blue-dim:      rgba(37, 99, 235, 0.08);
 }
 
 html, body {

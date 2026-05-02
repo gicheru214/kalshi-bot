@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Search, SlidersHorizontal, TrendingUp, Flame, Clock, Star } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import MarketCard from '../components/MarketCard'
@@ -9,6 +9,16 @@ import DepositModal from '../components/DepositModal'
 import { useKalshiMarkets } from '../hooks/useKalshiMarkets'
 import { CATEGORIES } from '../data/markets'
 import type { Category } from '../types'
+
+const WINS = [
+  { name: 'Marcus T.', win: '+$840',  market: 'BTC $200K call',    time: '2m ago' },
+  { name: 'Priya K.',  win: '+$1,240',market: 'PEPE flip DOGE',    time: '5m ago' },
+  { name: 'Jason L.',  win: '+$620',  market: 'Chiefs Super Bowl',  time: '8m ago' },
+  { name: 'Devon R.',  win: '+$3,100',market: 'ETH $5K YES',        time: '11m ago' },
+  { name: 'Sara M.',   win: '+$480',  market: 'TRUMP coin dump',    time: '14m ago' },
+  { name: 'Chris W.',  win: '+$2,200',market: 'AGI claim this year',time: '17m ago' },
+  { name: 'Aisha B.',  win: '+$750',  market: 'WIF hits $100',      time: '20m ago' },
+]
 
 type SortKey = 'volume' | 'trending' | 'newest' | 'endDate'
 type Step = 'vertical' | 'tour' | 'kalshi' | 'deposit' | 'done'
@@ -57,6 +67,12 @@ export default function Dashboard() {
   const [sortKey, setSortKey] = useState<SortKey>('volume')
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const [winIdx, setWinIdx] = useState(0)
+  const winTimer = useRef<ReturnType<typeof setInterval> | null>(null)
+  useEffect(() => {
+    winTimer.current = setInterval(() => setWinIdx(i => (i + 1) % WINS.length), 3500)
+    return () => { if (winTimer.current) clearInterval(winTimer.current) }
+  }, [])
 
   // Onboarding flow state
   const [step, setStep] = useState<Step>(() =>
@@ -146,6 +162,20 @@ export default function Dashboard() {
 
       {/* ── Main dashboard ── */}
       <div style={styles.page}>
+        {/* Social proof ticker */}
+        <div style={styles.winTicker}>
+          <span style={styles.winDot} />
+          <span style={styles.winText}>
+            <strong style={{ color: 'var(--green)' }}>{WINS[winIdx].name}</strong>
+            {' just won '}
+            <strong style={{ color: '#f59e0b' }}>{WINS[winIdx].win}</strong>
+            {' on '}
+            <span style={{ color: 'var(--text)' }}>{WINS[winIdx].market}</span>
+            <span style={{ color: 'var(--text-muted)', marginLeft: 6, fontSize: 11 }}>{WINS[winIdx].time}</span>
+          </span>
+          <span style={styles.winBadge}>🔥 LIVE</span>
+        </div>
+
         {/* Welcome banner */}
         <div style={styles.welcomeBanner}>
           <div style={styles.welcomeLeft}>
@@ -261,7 +291,23 @@ export default function Dashboard() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: { maxWidth: 1280, margin: '0 auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 24 },
+  page: { maxWidth: 1280, margin: '0 auto', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 16 },
+  winTicker: {
+    display: 'flex', alignItems: 'center', gap: 8,
+    padding: '9px 14px', borderRadius: 10,
+    background: 'rgba(0,200,150,0.05)', border: '1px solid rgba(0,200,150,0.15)',
+    fontSize: 13, color: 'var(--text-secondary)',
+    overflow: 'hidden',
+  },
+  winDot: {
+    width: 7, height: 7, borderRadius: '50%', background: 'var(--green)',
+    animation: 'pulse 1.5s ease infinite', flexShrink: 0, display: 'inline-block',
+  },
+  winText: { flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  winBadge: {
+    fontSize: 10, fontWeight: 800, padding: '2px 7px', borderRadius: 20, flexShrink: 0,
+    background: 'rgba(251,146,60,0.12)', color: '#fb923c', letterSpacing: '0.5px',
+  },
   welcomeBanner: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
     padding: '18px 20px', borderRadius: 14,

@@ -11,8 +11,7 @@ export default function VerticalSelectModal({ onSelect }: Props) {
         {/* Header */}
         <div style={s.header}>
           <div style={s.logoRow}>
-            <div style={s.logoMark}>K</div>
-            <span style={s.logoText}>Kalshi Bot</span>
+            <img src="/logo.png" alt="Kalshibot" style={{ height: 44, width: 'auto', borderRadius: 8, background: 'white', padding: '2px 8px' }} />
           </div>
           <p style={s.eyebrow}>Welcome to the platform</p>
           <h1 style={s.title}>What do you want to trade?</h1>
