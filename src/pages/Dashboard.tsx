@@ -6,7 +6,8 @@ import VerticalSelectModal from '../components/VerticalSelectModal'
 import MarketTourModal from '../components/MarketTourModal'
 import KalshiConnectModal from '../components/KalshiConnectModal'
 import DepositModal from '../components/DepositModal'
-import { MARKETS, CATEGORIES } from '../data/markets'
+import { useKalshiMarkets } from '../hooks/useKalshiMarkets'
+import { CATEGORIES } from '../data/markets'
 import type { Category } from '../types'
 
 type SortKey = 'volume' | 'trending' | 'newest' | 'endDate'
@@ -32,6 +33,7 @@ function trackSelection(userId: string, email: string, vertical: string, markets
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const { markets: MARKETS, live, loading } = useKalshiMarkets()
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [sortKey, setSortKey] = useState<SortKey>('volume')
   const [search, setSearch] = useState('')
@@ -131,7 +133,9 @@ export default function Dashboard() {
             <p style={styles.welcomeGreet}>
               👋 Welcome back, <strong>{user?.name.split(' ')[0]}</strong>
             </p>
-            <p style={styles.welcomeSub}>Markets are live · {MARKETS.length} open positions</p>
+            <p style={styles.welcomeSub}>
+              {loading ? 'Fetching live Kalshi data…' : live ? `🟢 Live · ${MARKETS.length} markets` : `📊 ${MARKETS.length} markets`}
+            </p>
           </div>
           <div style={styles.balancePill}>
             <span style={styles.balanceLabel}>Balance</span>
