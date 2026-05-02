@@ -13,6 +13,8 @@ const AMOUNTS = [
   { value: 500,  label: '$500',  badge: '💎 Max alpha' },
 ]
 
+const SUBSCRIPTION_PRICE = 150
+
 const SOCIAL_PROOF = [
   { name: 'Marcus T.', action: 'just won $420 on PEPE →', time: '2m ago' },
   { name: 'Priya K.',  action: 'turned $100 into $380',   time: '5m ago' },
@@ -45,20 +47,19 @@ export default function DepositModal({ onDeposit, onSkip }: Props) {
         </div>
 
         <div style={s.header}>
-          <div style={s.trophy}>💰</div>
-          <h2 style={s.title}>Fund your account</h2>
+          <div style={s.trophy}>🤖</div>
+          <h2 style={s.title}>Fund your bot account</h2>
           <p style={s.sub}>
-            Markets are moving <em>right now.</em> Your practice account has limits —
-            deposit real funds and start capturing real wins.
+            Add funds to your <strong style={{ color: 'var(--text)' }}>fun account</strong> — the bot uses this to execute live trades on Kalshi on your behalf.
           </p>
         </div>
 
-        {/* Bonus callout */}
+        {/* Subscription callout */}
         <div style={s.bonusBanner}>
           <Gift size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />
           <span>
-            <strong style={{ color: '#f59e0b' }}>First deposit bonus:</strong>
-            {' '}100% match up to $50. Limited time.
+            <strong style={{ color: '#f59e0b' }}>${SUBSCRIPTION_PRICE}/mo bot access</strong>
+            {' '}— cancel anytime. First 7 days free.
           </span>
         </div>
 
@@ -79,27 +80,27 @@ export default function DepositModal({ onDeposit, onSkip }: Props) {
           ))}
         </div>
 
-        {/* Projected return */}
+        {/* Stats row */}
         <div style={s.projRow}>
           <div style={s.projItem}>
             <TrendingUp size={13} style={{ color: 'var(--green)' }} />
-            <span>Avg return on ${ selected}</span>
+            <span>Avg bot return</span>
             <strong style={{ color: 'var(--green)' }}>+${Math.round(selected * 0.82)}</strong>
           </div>
           <div style={s.projItem}>
             <Zap size={13} style={{ color: '#f59e0b' }} />
-            <span>Instant access</span>
-            <strong style={{ color: '#f59e0b' }}>Yes</strong>
+            <span>Trades on Kalshi</span>
+            <strong style={{ color: '#f59e0b' }}>Live</strong>
           </div>
         </div>
 
         <button style={s.depositBtn} onClick={() => onDeposit(selected)}>
-          Deposit ${selected} and start winning
+          Fund ${selected} · Start bot trading
           <ArrowRight size={18} />
         </button>
 
         <button style={s.shameBtn} onClick={onSkip}>
-          No thanks — I like watching others win while I sit out 😬
+          No thanks — I'll keep donating to smarter traders 📉
         </button>
       </div>
 
