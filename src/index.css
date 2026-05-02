@@ -1,0 +1,236 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Kalshi palette */
+  --bg:            #04080f;
+  --bg-card:       #0b1220;
+  --bg-card-hover: #101b2e;
+  --bg-elevated:   #0f1929;
+  --border:        #162035;
+  --border-bright: #1e2e48;
+
+  /* Kalshi green */
+  --green:         #00c896;
+  --green-bright:  #00e5ab;
+  --green-dim:     rgba(0, 200, 150, 0.12);
+  --green-dim2:    rgba(0, 200, 150, 0.07);
+
+  /* Accents */
+  --blue:          #2563eb;
+  --blue-dim:      rgba(37, 99, 235, 0.12);
+  --red:           #f43f5e;
+  --red-dim:       rgba(244, 63, 94, 0.12);
+  --yellow:        #f59e0b;
+
+  /* Text */
+  --text:          #f0f4ff;
+  --text-secondary:#8fa3bf;
+  --text-muted:    #4a6080;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  height: 100%;
+  min-height: 100%;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+a { color: inherit; text-decoration: none; }
+input, textarea, select { font-family: inherit; outline: none; }
+
+/* Gradient text — Kalshi green */
+.grad-text {
+  background: linear-gradient(135deg, #00e5ab, #00c896, #00a8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grad-text-warm {
+  background: linear-gradient(135deg, #f0f4ff, #00e5ab);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,200,150,0.3); }
+  50%       { box-shadow: 0 0 40px rgba(0,200,150,0.6); }
+}
+
+.fade-up   { animation: fadeUp 0.6s ease forwards; }
+.fade-up-1 { animation: fadeUp 0.6s 0.1s ease both; }
+.fade-up-2 { animation: fadeUp 0.6s 0.2s ease both; }
+.fade-up-3 { animation: fadeUp 0.6s 0.3s ease both; }
+.fade-up-4 { animation: fadeUp 0.6s 0.4s ease both; }
+.fade-up-5 { animation: fadeUp 0.6s 0.5s ease both; }
+
+/* ── Responsive layout classes ── */
+
+/* Dashboard grids */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Market page 2-col layout */
+.market-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+.market-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* Header nav */
+.header-nav { display: flex; gap: 2px; flex: 1; }
+
+/* Sort inline (desktop only) */
+.sort-inline { display: flex; gap: 4px; }
+
+/* Landing stats */
+.stats-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+}
+
+/* Prevent iOS input zoom — must be 16px+ */
+input, select, textarea { font-size: 16px; }
+
+/* Hide scrollbar on swipeable rows */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Mobile modal bottom-sheet pattern */
+.modal-overlay-mobile {
+  align-items: flex-end !important;
+  padding: 0 !important;
+}
+.modal-sheet {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  padding: 20px 16px 32px !important;
+  max-height: 92vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Mobile overrides */
+@media (max-width: 640px) {
+  .hide-mobile { display: none !important; }
+
+  /* Single-column grids on mobile */
+  .featured-grid,
+  .market-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Stack market page */
+  .market-layout { grid-template-columns: 1fr; }
+  .market-stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Hide desktop nav in header (bottom nav handles it) */
+  .header-nav { display: none; }
+
+  /* Hide inline sort — filter button handles it */
+  .sort-inline { display: none; }
+
+  /* Stats 1 col on very small */
+  .stats-inner { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  /* Apply bottom-sheet to all modals on mobile */
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .tour-modal {
+    background: var(--bg-card) !important;
+    border-radius: 24px 24px 0 0 !important;
+    padding: 20px 16px 32px !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: stretch !important;
+  }
+  .tour-modal::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal-card {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding: 20px 16px 36px !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 24px 24px 0 0 !important;
+  }
+  /* Bottom sheet drag handle */
+  .modal-card::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+}
+
+@media (min-width: 641px) {
+  .hide-desktop { display: none !important; }
+}
