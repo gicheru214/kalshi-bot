@@ -9,6 +9,7 @@ import DepositModal from '../components/DepositModal'
 import { useKalshiMarkets } from '../hooks/useKalshiMarkets'
 import { CATEGORIES } from '../data/markets'
 import type { Category } from '../types'
+import { startAppTour } from '../lib/tour'
 
 const WINS = [
   { name: 'Marcus T.', win: '+$840',  market: 'BTC $200K call',    time: '2m ago' },
@@ -117,6 +118,13 @@ export default function Dashboard() {
     setStep('done')
   }
 
+  // Fire Driver.js tour once onboarding flow completes
+  useEffect(() => {
+    if (step !== 'done') return
+    const t = setTimeout(() => startAppTour(), 700)
+    return () => clearTimeout(t)
+  }, [step])
+
   const filtered = useMemo(() => {
     let list = [...MARKETS]
     if (activeCategory !== 'all') list = list.filter(m => m.category === activeCategory as Category)
@@ -194,7 +202,7 @@ export default function Dashboard() {
 
         {/* Featured strip */}
         {featured.length > 0 && (
-          <section style={styles.featuredSection}>
+          <section id="featured-markets" style={styles.featuredSection}>
             <div style={styles.sectionHeader}>
               <Flame size={14} style={{ color: '#fb923c' }} />
               <span style={styles.sectionTitle}>Featured</span>
@@ -208,8 +216,8 @@ export default function Dashboard() {
         {/* All markets */}
         <section style={styles.allSection}>
           {/* Search + filter */}
-          <div style={styles.controls}>
-            <div style={styles.searchWrap}>
+          <div id="sort-controls" style={styles.controls}>
+            <div id="market-search" style={styles.searchWrap}>
               <Search size={15} style={styles.searchIcon} />
               <input
                 style={styles.searchInput}
@@ -228,7 +236,7 @@ export default function Dashboard() {
           </div>
 
           {/* Category tabs */}
-          <div style={styles.categoryTabs} className="no-scrollbar">
+          <div id="category-tabs" style={styles.categoryTabs} className="no-scrollbar">
             {CATEGORIES.map(({ id, label, emoji }) => (
               <button
                 key={id}
@@ -273,7 +281,7 @@ export default function Dashboard() {
           </div>
 
           {filtered.length > 0 ? (
-            <div className="market-grid">
+            <div id="market-grid" className="market-grid">
               {filtered.map(m => <MarketCard key={m.id} market={m} />)}
             </div>
           ) : (

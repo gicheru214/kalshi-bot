@@ -249,3 +249,45 @@ input, select, textarea { font-size: 16px; }
 @media (min-width: 641px) {
   .hide-desktop { display: none !important; }
 }
+
+/* ── Driver.js Tour — dark theme overrides ── */
+.pf-tour-popover {
+  background: #0b1220 !important;
+  border: 1px solid #1e2e48 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.8) !important;
+  padding: 20px !important;
+  max-width: 280px !important;
+}
+.pf-tour-popover .driver-popover-title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #f0f4ff !important;
+  margin-bottom: 8px !important;
+}
+.pf-tour-popover .driver-popover-description {
+  font-size: 13px !important;
+  color: #8fa3bf !important;
+  line-height: 1.6 !important;
+}
+.pf-tour-popover .driver-popover-navigation-btns button {
+  background: #00c896 !important;
+  color: #04080f !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  padding: 7px 14px !important;
+}
+.pf-tour-popover .driver-popover-prev-btn {
+  background: transparent !important;
+  color: #8fa3bf !important;
+  border: 1px solid #1e2e48 !important;
+}
+.pf-tour-popover .driver-popover-close-btn {
+  color: #4a6080 !important;
+}
+.pf-tour-popover .driver-popover-progress-text {
+  color: #4a6080 !important;
+  font-size: 11px !important;
+}

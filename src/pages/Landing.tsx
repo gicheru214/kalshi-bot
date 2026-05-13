@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, ShieldCheck, Zap, TrendingUp, Star, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Zap, TrendingUp, Star, ChevronDown, ChevronUp, X, BookOpen } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const STATS = [
   { value: '$2.4B+', label: 'Total Volume Traded' },
@@ -123,6 +123,56 @@ export default function Landing() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const go = () => { if (user) navigate('/app'); else navigate('/login') }
+
+  const [showTimedPopup, setShowTimedPopup] = useState(false)
+  const [showScrollPopup, setShowScrollPopup] = useState(false)
+  const scrollPopupFired = useRef(false)
+
+  // 3-second timed popup — show once per session
+  useEffect(() => {
+    if (sessionStorage.getItem('timed_popup_seen')) return
+    const t = setTimeout(() => setShowTimedPopup(true), 3000)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Scroll-to-bottom popup — show once per session
+  // Note: body is the scroll container (html/body have overflow-x:hidden),
+  // so we check document.body.scrollTop as well as window.scrollY
+  useEffect(() => {
+    const onScroll = () => {
+      if (scrollPopupFired.current) return
+      if (sessionStorage.getItem('scroll_popup_seen')) return
+      const scrolled = window.scrollY || document.body.scrollTop || document.documentElement.scrollTop
+      const total = document.body.scrollHeight
+      const threshold = total - window.innerHeight - 300
+      if (scrolled >= threshold && threshold > 0) {
+        scrollPopupFired.current = true
+        setShowScrollPopup(true)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    document.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.removeEventListener('scroll', onScroll)
+    }
+  }, [])
+
+  const dismissTimedPopup = () => {
+    setShowTimedPopup(false)
+    sessionStorage.setItem('timed_popup_seen', '1')
+  }
+
+  const dismissScrollPopup = () => {
+    setShowScrollPopup(false)
+    sessionStorage.setItem('scroll_popup_seen', '1')
+  }
+
+  const goFromPopup = () => {
+    sessionStorage.setItem('timed_popup_seen', '1')
+    sessionStorage.setItem('scroll_popup_seen', '1')
+    go()
+  }
 
   return (
     <div style={s.page}>
@@ -374,12 +424,71 @@ export default function Landing() {
         </div>
       </footer>
 
+      {/* ── TIMED POPUP (3 seconds) ── */}
+      {showTimedPopup && (
+        <div style={p.timedWrap}>
+          <div style={p.timedCard}>
+            <button style={p.closeBtn} onClick={dismissTimedPopup} aria-label="Close">
+              <X size={15} />
+            </button>
+            <div style={p.timedBadge}>🔥 Markets moving now</div>
+            <p style={p.timedTitle}>Turn your predictions<br />into real money</p>
+            <p style={p.timedSub}>
+              340,000+ traders are live right now on crypto, politics &amp; sports.
+              Start with $1,000 free practice balance.
+            </p>
+            <button style={p.timedCTA} onClick={goFromPopup}>
+              Start trading free <ArrowRight size={15} />
+            </button>
+            <p style={p.timedNote}>No credit card · 60 seconds to sign up</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── SCROLL-TO-BOTTOM POPUP (free trading manual) ── */}
+      {showScrollPopup && (
+        <div style={p.scrollOverlay} onClick={dismissScrollPopup}>
+          <div style={p.scrollCard} onClick={e => e.stopPropagation()}>
+            <button style={p.closeBtn} onClick={dismissScrollPopup} aria-label="Close">
+              <X size={15} />
+            </button>
+            <div style={p.manualIconWrap}>
+              <BookOpen size={28} style={{ color: 'var(--green)' }} />
+            </div>
+            <p style={p.manualEyebrow}>FREE DOWNLOAD</p>
+            <p style={p.manualTitle}>The Prediction Market Edge</p>
+            <p style={p.manualSub}>
+              Our 47-page trader manual covers everything you need to consistently profit:
+            </p>
+            <ul style={p.manualList}>
+              <li>📈 How to find mispriced markets before the crowd</li>
+              <li>🧠 Bayesian thinking for YES/NO decisions</li>
+              <li>💰 Bankroll management & position sizing</li>
+              <li>⚡ Reading order flow and volume signals</li>
+              <li>🏆 The 5 edge patterns pros use every day</li>
+            </ul>
+            <button style={p.manualCTA} onClick={goFromPopup}>
+              Get the free manual <ArrowRight size={15} />
+            </button>
+            <p style={p.manualNote}>Included free with your account — no upsell, ever</p>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes ticker {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
         .ticker-scroll { animation: ticker 28s linear infinite; }
+        @keyframes slideUp {
+          from { transform: translateY(24px); opacity: 0; }
+          to   { transform: translateY(0);   opacity: 1; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
       `}</style>
     </div>
   )
@@ -994,4 +1103,172 @@ const s: Record<string, React.CSSProperties> = {
     maxWidth: 680,
   },
   footerCopy: { fontSize: 12, color: 'var(--text-muted)' },
+}
+
+/* ── POPUP STYLES ── */
+const p: Record<string, React.CSSProperties> = {
+  closeBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 28,
+    height: 28,
+    borderRadius: '50%',
+    background: 'var(--bg)',
+    border: '1px solid var(--border-bright)',
+    color: 'var(--text-muted)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+  },
+
+  /* Timed popup — bottom-right slide-up */
+  timedWrap: {
+    position: 'fixed',
+    bottom: 24,
+    right: 24,
+    zIndex: 999,
+    animation: 'slideUp 0.35s ease',
+  },
+  timedCard: {
+    width: 300,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border-bright)',
+    borderRadius: 18,
+    padding: '22px 20px 18px',
+    boxShadow: '0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,200,150,0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+    position: 'relative',
+  },
+  timedBadge: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: '#fb923c',
+    background: 'rgba(251,146,60,0.1)',
+    border: '1px solid rgba(251,146,60,0.2)',
+    padding: '3px 10px',
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  timedTitle: {
+    fontSize: 18,
+    fontWeight: 900,
+    color: 'var(--text)',
+    lineHeight: 1.25,
+    letterSpacing: '-0.4px',
+  },
+  timedSub: {
+    fontSize: 13,
+    color: 'var(--text-secondary)',
+    lineHeight: 1.6,
+  },
+  timedCTA: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: '12px',
+    borderRadius: 10,
+    background: 'var(--green)',
+    color: '#04080f',
+    fontSize: 14,
+    fontWeight: 800,
+    boxShadow: '0 4px 20px rgba(0,200,150,0.35)',
+  },
+  timedNote: {
+    fontSize: 11,
+    color: 'var(--text-muted)',
+    textAlign: 'center',
+  },
+
+  /* Scroll popup — centered overlay */
+  scrollOverlay: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 1000,
+    background: 'rgba(4,8,15,0.85)',
+    backdropFilter: 'blur(12px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    animation: 'fadeIn 0.25s ease',
+  },
+  scrollCard: {
+    width: '100%',
+    maxWidth: 440,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border-bright)',
+    borderRadius: 24,
+    padding: '32px 28px 24px',
+    boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+    position: 'relative',
+    animation: 'slideUp 0.35s ease',
+  },
+  manualIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    background: 'rgba(0,200,150,0.1)',
+    border: '1px solid rgba(0,200,150,0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  manualEyebrow: {
+    fontSize: 11,
+    fontWeight: 800,
+    letterSpacing: '2px',
+    color: 'var(--green)',
+  },
+  manualTitle: {
+    fontSize: 24,
+    fontWeight: 900,
+    color: 'var(--text)',
+    letterSpacing: '-0.5px',
+    lineHeight: 1.2,
+  },
+  manualSub: {
+    fontSize: 14,
+    color: 'var(--text-secondary)',
+    lineHeight: 1.6,
+  },
+  manualList: {
+    listStyle: 'none',
+    padding: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+    fontSize: 13,
+    color: 'var(--text-secondary)',
+    lineHeight: 1.5,
+    background: 'var(--bg)',
+    borderRadius: 12,
+    border: '1px solid var(--border)',
+    padding: '14px 16px',
+  } as React.CSSProperties,
+  manualCTA: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: '14px',
+    borderRadius: 12,
+    background: 'var(--green)',
+    color: '#04080f',
+    fontSize: 15,
+    fontWeight: 800,
+    boxShadow: '0 4px 20px rgba(0,200,150,0.35)',
+  },
+  manualNote: {
+    fontSize: 12,
+    color: 'var(--text-muted)',
+    textAlign: 'center',
+  },
 }

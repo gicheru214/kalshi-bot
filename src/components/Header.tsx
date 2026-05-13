@@ -90,9 +90,8 @@ const s: Record<string, React.CSSProperties> = {
   },
   logo: {
     display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0,
-    background: 'white', borderRadius: 8, padding: '2px 8px',
   },
-  logoImg: { height: 30, width: 'auto' },
+  logoImg: { height: 42, width: 'auto' },
   nav: { display: 'flex', gap: 2, flex: 1 },
   navLink: {
     padding: '5px 12px', borderRadius: 7, fontSize: 13, fontWeight: 600,
