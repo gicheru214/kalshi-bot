@@ -128,20 +128,18 @@ export default function Landing() {
   const [showScrollPopup, setShowScrollPopup] = useState(false)
   const scrollPopupFired = useRef(false)
 
-  // 3-second timed popup — show once per session
+  // 3-second timed popup — show once per visitor (persists across sessions)
   useEffect(() => {
-    if (sessionStorage.getItem('timed_popup_seen')) return
+    if (localStorage.getItem('timed_popup_seen')) return
     const t = setTimeout(() => setShowTimedPopup(true), 3000)
     return () => clearTimeout(t)
   }, [])
 
-  // Scroll-to-bottom popup — show once per session
-  // Note: body is the scroll container (html/body have overflow-x:hidden),
-  // so we check document.body.scrollTop as well as window.scrollY
+  // Scroll-to-bottom popup — show once per visitor
   useEffect(() => {
     const onScroll = () => {
       if (scrollPopupFired.current) return
-      if (sessionStorage.getItem('scroll_popup_seen')) return
+      if (localStorage.getItem('scroll_popup_seen')) return
       const scrolled = window.scrollY || document.body.scrollTop || document.documentElement.scrollTop
       const total = document.body.scrollHeight
       const threshold = total - window.innerHeight - 300
@@ -160,17 +158,17 @@ export default function Landing() {
 
   const dismissTimedPopup = () => {
     setShowTimedPopup(false)
-    sessionStorage.setItem('timed_popup_seen', '1')
+    localStorage.setItem('timed_popup_seen', '1')
   }
 
   const dismissScrollPopup = () => {
     setShowScrollPopup(false)
-    sessionStorage.setItem('scroll_popup_seen', '1')
+    localStorage.setItem('scroll_popup_seen', '1')
   }
 
   const goFromPopup = () => {
-    sessionStorage.setItem('timed_popup_seen', '1')
-    sessionStorage.setItem('scroll_popup_seen', '1')
+    localStorage.setItem('timed_popup_seen', '1')
+    localStorage.setItem('scroll_popup_seen', '1')
     go()
   }
 
@@ -1241,7 +1239,7 @@ const p: Record<string, React.CSSProperties> = {
   },
   manualList: {
     listStyle: 'none',
-    padding: 0,
+    margin: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 8,
