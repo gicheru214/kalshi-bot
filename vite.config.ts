@@ -18,8 +18,8 @@ export default defineConfig({
         background_color: '#04080f',
         display: 'standalone',
         orientation: 'portrait-primary',
-        scope: '/',
-        start_url: '/',
+        scope: '/kalshi-bot/',
+        start_url: '/kalshi-bot/',
         categories: ['finance', 'utilities'],
         icons: [
           {
