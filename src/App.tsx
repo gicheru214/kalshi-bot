@@ -142,7 +142,7 @@ function PlaceholderPage({ title, icon }: { title: string; icon: string }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ThemeProvider>
         <AuthProvider>
           <AppRoutes />
